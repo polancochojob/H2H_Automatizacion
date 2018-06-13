@@ -48,7 +48,7 @@ import javax.imageio.ImageIO;
 
 class TestConsultar {
 
-	private static final String TimeSpan = null;
+	private static final String TimeSpan = null;//
 	private static String UserName="";
 	private static String PathFiles="";
 	private static String FileConfig="";
