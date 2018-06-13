@@ -67,8 +67,15 @@ class TestConsultar {
 
 
 	public static void main(String[] args) throws Exception {
+	//public static void main (String PathFile) throws Exception {
 
 		try {
+			
+			System.out.println("RUTA: " + args[0]);
+			
+			PathFiles = args[0] + "\\";
+			
+			
 			
 			UserName = System.getProperty("user.name");
 			
@@ -121,11 +128,11 @@ class TestConsultar {
 			escribeword("Preparación de creación de archivos",true,10,true,"Lucida Sans Unicode","izquierda");
 			System.out.println(" ");
 			crearLog("");
-			System.out.println("Favor de ingresar la ruta donde se encuentran los archivos de configuración");
-			crearLog("Favor de ingresar la ruta donde se encuentran los archivos de configuración");
+			//System.out.println("Favor de ingresar la ruta donde se encuentran los archivos de configuración");
+			//crearLog("Favor de ingresar la ruta donde se encuentran los archivos de configuración");
 
-			PathFiles = scanner.nextLine() + "\\";
-			crearLog(PathFiles);
+			//PathFiles = scanner.nextLine() + "\\";
+			//crearLog(PathFiles);
 			
 			PropiedadesWord();
 			
