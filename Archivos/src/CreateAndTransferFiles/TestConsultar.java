@@ -64,18 +64,17 @@ class TestConsultar {
 	private static String OSArch = System.getProperty("os.arch").toLowerCase();
 	private static String OSVersion = System.getProperty("os.version").toLowerCase();
 	private static File imagen;
+	private static int ciclos = 0;
+	private static int tiempo = 0;
 
 
 	public static void main(String[] args) throws Exception {
 	//public static void main (String PathFile) throws Exception {
 
 		try {
-			
-			System.out.println("RUTA: " + args[0]);
-			
 			PathFiles = args[0] + "\\";
-			
-			
+			ciclos = Integer.parseInt(args[1]);
+			tiempo = Integer.parseInt(args[2]);
 			
 			UserName = System.getProperty("user.name");
 			
@@ -104,9 +103,6 @@ class TestConsultar {
 		try{
 		
 			FileConfig = "FileConfig.csv";
-
-			int ciclos;
-			int tiempo;
 
 			System.out.println("******** Prueba de Validación de procesamiento de archivos en el Sistema H2H ********" + "\r\n");
 			crearLog("******** Prueba de Validación de procesamiento de archivos en el Sistema H2H ********" + "\r\n");
@@ -173,7 +169,15 @@ class TestConsultar {
 			crearLog("");
 			System.out.println("(" + hora("") + ") 4. Definición de ciclos y tiempo de espera de ejecución entre ciclos");
 			crearLog("(" + hora("") + ") 4. Definición de ciclos y tiempo de espera de ejecución entre ciclos");
-
+			System.out.println(" ");
+			crearLog("");
+			System.out.println("* Se ejecutaran " + ciclos + "ciclos de prueba");
+			crearLog("* Se ejecutaran " + ciclos + "ciclos de prueba");
+			System.out.println(" ");
+			crearLog("");
+			System.out.println("* El tiempo de espera entre cada ciclo sera de " + tiempo + " minutos");
+			crearLog("* El tiempo de espera entre cada ciclo sera de " + tiempo + " minutos");
+			/*
 			System.out.println(" ");
 			crearLog("");
 			System.out.println("* Favor de indicar cuantos ciclos de tiempo desea que se ejecuten en la prueba");
@@ -187,6 +191,7 @@ class TestConsultar {
 			crearLog("* Favor de indicar el tiempo de espera que se deberá realizar entre ciclos (Indicarlos en minutos)");
 			tiempo = scanner.nextInt();
 			crearLog(String.valueOf(tiempo));
+			*/
 
 			scanner.close();
 			
