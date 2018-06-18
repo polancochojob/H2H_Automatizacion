@@ -52,12 +52,12 @@ class TestConsultar {
     private static JavascriptExecutor js;
     private static Object tamanodocument ;
     private static String NameScreenShotTest="";
- /*
+ 
     static {
         originalStream = System.out;
         newStream = new PrintStream(newConsole);
         System.setOut(newStream);
-    }*/
+    }
 
 	public static void main(String[] args) throws Exception {
 
@@ -66,7 +66,7 @@ class TestConsultar {
 				UserName = System.getProperty("user.name");
 				
 				CrearReporte.Reporte(PathFiles);
-				System.exit(0);
+				//System.exit(0);
 				
 				iniconsole();
 				ambiente();
