@@ -71,50 +71,20 @@ public class ArchivoWord{
 	}
 	
 	
-	private static void PropiedadesWord() throws IOException
+	public static void PropiedadesWord() throws IOException
 	{
 		
 		String LineaN="", Autor="", Release="", Version="", ResponsableCambio="", CausaCambio="", FechaCambio="", Elaborado="", ClaveProyecto="", NombreProyecto="";
-		FileReader fr = new FileReader(PathFiles + "DatosReporte.txt");
-		BufferedReader br = new BufferedReader(fr);
-		
-		int i=0;
-		
-	    while((LineaN = br.readLine()) != null)
-	      {
-	    	i=i+1;
-	    	if (i>1 )
-	    	 {
-	    		Autor = LineaN.substring(0, LineaN.indexOf(";"));
-	    		LineaN = LineaN.substring(LineaN.indexOf(";")+1);
-	    		
-	    		Release = LineaN.substring(0, LineaN.indexOf(";"));
-	    		LineaN = LineaN.substring(LineaN.indexOf(";")+1);
-	    		
-	    		Version = LineaN.substring(0, LineaN.indexOf(";"));
-	    		LineaN = LineaN.substring(LineaN.indexOf(";")+1);
-	    		
-	    		ResponsableCambio = LineaN.substring(0, LineaN.indexOf(";"));
-	    		LineaN = LineaN.substring(LineaN.indexOf(";")+1);
-	    		
-	    		CausaCambio = LineaN.substring(0, LineaN.indexOf(";"));
-	    		LineaN = LineaN.substring(LineaN.indexOf(";")+1);
-	    		
-	    		FechaCambio = LineaN.substring(0, LineaN.indexOf(";"));
-	    		LineaN = LineaN.substring(LineaN.indexOf(";")+1);
-	    		
-	    		Elaborado = LineaN.substring(0, LineaN.indexOf(";"));
-	    		LineaN = LineaN.substring(LineaN.indexOf(";")+1);
-	    		
-	    		ClaveProyecto = LineaN.substring(0, LineaN.indexOf(";"));
-	    		LineaN = LineaN.substring(LineaN.indexOf(";")+1);
-	    		
-	    		NombreProyecto = LineaN.substring(0, LineaN.indexOf(";"));
-	    		LineaN = LineaN.substring(LineaN.indexOf(";")+1);
-	    	 }
-	      }
 
-	    fr.close();
+		Autor = TestConsultar.leerproperties("autor");
+	    Release = TestConsultar.leerproperties("release");
+	    Version = TestConsultar.leerproperties("version");
+	    ResponsableCambio = TestConsultar.leerproperties("responsablecambio");
+	    CausaCambio = TestConsultar.leerproperties("causacambio");
+	    FechaCambio = TestConsultar.leerproperties("fechacambio");
+	    Elaborado = TestConsultar.leerproperties("elaborado");
+	    ClaveProyecto = TestConsultar.leerproperties("claveproyecto");
+	    NombreProyecto = TestConsultar.leerproperties("nombreproyecto");
 		
 		POIXMLProperties props = documento.getProperties();
 		org.apache.poi.POIXMLProperties.CustomProperties cp = props.getCustomProperties();
@@ -169,17 +139,17 @@ public class ArchivoWord{
 	
 	public static void crearword() throws InvalidFormatException, IOException
 	{	
-		System.err.println("Ruta archivo:"+PathFiles + FileWord);
+		//System.out.println("Ruta archivo:"+PathFiles + FileWord);
 		fs = new FileInputStream(PathFiles + FileWord);      
 		documento = new XWPFDocument(OPCPackage.open(fs));
 		
 		XWPFParagraph paragraph = documento.createParagraph();
 		paragraph.setBorderBottom(Borders.BASIC_BLACK_DASHES);
 		paragraph.setBorderTop(Borders.BASIC_BLACK_DASHES);
-	    paragraph.setAlignment(ParagraphAlignment.BOTH);
+	    paragraph.setAlignment(ParagraphAlignment.LEFT);
 	    XWPFRun runInicio = paragraph.createRun();
 	    runInicio.setBold(true);
-	    runInicio.setFontSize(12);
+	    runInicio.setFontSize(10);
 	    runInicio.setShadow(true);
 	    //runInicio.setColor("000128");
 	    runInicio.setText("Inicio de evidencias de la ejecución de pruebas");
