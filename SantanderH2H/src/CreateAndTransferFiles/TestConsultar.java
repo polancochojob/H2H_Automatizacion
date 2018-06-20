@@ -21,16 +21,20 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
-//Prueba
+
 
 class TestConsultar {
-	
+
 	private static String UserName="";
 	private static String PathFiles="";
 	private static String FileConfig="FileConfig.csv";
@@ -52,7 +56,10 @@ class TestConsultar {
     private static JavascriptExecutor js;
     private static Object tamanodocument ;
     private static String NameScreenShotTest="";
- 
+    public static String rutaCiclo;
+
+    private static ArchivoWord archivoWord;
+
     static {
         originalStream = System.out;
         newStream = new PrintStream(newConsole);
@@ -64,23 +71,20 @@ class TestConsultar {
 		try {
 				PathFiles = args[0];
 				UserName = System.getProperty("user.name");
-				
-				CrearReporte.Reporte(PathFiles);
-				//System.exit(0);
-				
+
 				iniconsole();
 				ambiente();
 				inicio(args);
 				System.setOut(console);
 			}
-		
+
 		catch(NullPointerException e)
 			{
 				System.out.println("Error: " + e);
 			}
 
 	}
-	
+
 	private static void iniconsole() throws FileNotFoundException
 	{
 		File file = new File(PathFiles + "\\Evidencias\\CreateAndTransferFiles.log");
@@ -89,46 +93,46 @@ class TestConsultar {
 		ps.flush();
 		System.setOut(ps);
 	}
-	
+
 	private static void ambiente()
 	{
 		deletedirectory(new File (PathFiles + "\\Evidencias\\"));
 		createdirectory(PathFiles + "\\Evidencias\\");
 		createdirectory(PathFiles + "\\Evidencias\\Pantallas\\");
 	}
-	
+
 	private static void deletedirectory(File pDirectory)
 	{
-	    if (!pDirectory.exists()) 
-	    	{ 
-	    		return; 
-	    	} 
+	    if (!pDirectory.exists())
+	    	{
+	    		return;
+	    	}
 
-	    if (pDirectory.isDirectory()) 
-	    	{ 
-	        for (File f : pDirectory.listFiles()) 
-	        	{ 
-	        		deletedirectory(f);  
-	        	} 
-	    	} 
-	    pDirectory.delete(); 
+	    if (pDirectory.isDirectory())
+	    	{
+	        for (File f : pDirectory.listFiles())
+	        	{
+	        		deletedirectory(f);
+	        	}
+	    	}
+	    pDirectory.delete();
 	}
-	
+
 	private static void createdirectory (String path)
 	{
 
-		File directorio=new File(path); 
-		directorio.mkdir(); 
+		File directorio=new File(path);
+		directorio.mkdir();
 	}
-	
+
 	public static String leerproperties(String valor) throws FileNotFoundException, IOException
 	{
 		try
 		{
 			Properties p = new Properties();
-			p.load(new FileReader(PathFiles +"\\config.properties"));			
+			p.load(new FileReader(PathFiles +"\\config.properties"));
 			valor = p.getProperty(valor);
-		
+
 		}
 		catch (FileNotFoundException e)
 		{
@@ -136,7 +140,7 @@ class TestConsultar {
 		}
 		return valor;
 	}
-	
+
 	private static void inicio(String[] args) throws Exception
 	{
 		System.out.println("******** Prueba de Validación de procesamiento de archivos en el Sistema H2H ********" + "\r\n");
@@ -146,30 +150,30 @@ class TestConsultar {
 		System.out.println("(" + hora("") + ") 1. Carga de información de configuración para la generación de archivos");
 		System.out.println(" ");
 		PathFiles= args[0];
-		
+
 		CreateAndTransferFiles.main(PathFiles);
-		
+
 		System.out.println(" ");
-		
+
 		LecturaArchivos(FileConfig,PathFiles);
-		
+
 		System.out.println("(" + hora("") + ") * Se obtiene el driver del navegador para realizar la prueba");
-		
+
 		Browser=leerproperties("navegador");
-		
+
 		System.out.println("(" + hora("") + ") * Definición de ciclos y tiempo de espera de ejecución entre ciclos");
-		
+
 		System.out.println(" ");
-		
+
 		ciclos = Integer.parseInt(leerproperties("ciclos"));
 		tiempociclos = Integer.parseInt(leerproperties("tiempociclos"));
-		
+
 		System.out.println("(" + hora("") + ") 3. Abrir el navegador para la prueba");
-		
+
 		BrowserOpen();
 
 	}
-	
+
 	private static void LecturaArchivos(String FileConfig, String FilePath) throws IOException, InterruptedException
 	{
 		try
@@ -181,16 +185,16 @@ class TestConsultar {
 
 		    int i=0;
 		    int j=0;
-		    
+
 		    int NumFiles = (int) br.lines().count();
-		    
+
 		    NumFiles = NumFiles - 1;
-		    
+
 		    fr = new FileReader(FilePath + "\\" + FileConfig);
 		    br = new BufferedReader(fr);
-		    
+
 		    DataConfig = new String[NumFiles][20];
-		    
+
 		    while((LineaN = br.readLine()) != null)
 		      {
 		    	i=i+1;
@@ -200,38 +204,38 @@ class TestConsultar {
 		    		//Obtenemos el número consecutivo de registros
 		    		DataConfig[j][0] = LineaN.substring(0, LineaN.indexOf(";"));
 		    		LineaN = LineaN.substring(LineaN.indexOf(";")+1);
-		    		
+
 		    		//Obtenemos el nombre del archivo
 		    		DataConfig[j][1] = LineaN.substring(0, LineaN.indexOf(";"));
 		    		LineaN = LineaN.substring(LineaN.indexOf(";")+1);
-		    		
+
 		    		//Obtenemos el nombre del archivo base
 		    		DataConfig[j][2] = LineaN.substring(0, LineaN.indexOf(";"));
 		    		LineaN = LineaN.substring(LineaN.indexOf(";")+1);
-		    		
+
 		    		//Obtenemos el número de cuenta
 		    		DataConfig[j][3] = LineaN.substring(0, LineaN.indexOf(";"));
 		    		LineaN = LineaN.substring(LineaN.indexOf(";")+1);
-		    		
+
 		    		//Obtenemos el número de cliente
 		    		DataConfig[j][4] = LineaN.substring(0, LineaN.indexOf(";"));
 		    		LineaN = LineaN.substring(LineaN.indexOf(";")+1);
-		    		
+
 		    		//Obtenemos la fecha
 		    		DataConfig[j][5] = LineaN.substring(0, LineaN.indexOf(";"));
-		    		
+
 		    		//Obtenemos el usuario del sistema H2H
 		    		DataConfig[j][6] = leerproperties("userh2h");
-		    		
+
 		    		//Obtenemos la contraseña del sistema H2H
 		    		DataConfig[j][7] = leerproperties("pwdh2h");
-		    		
+
 		    		//Inicializamos el estatus del archivo
 		    		DataConfig[j][8] = "Sin estado";
 		    		TotFiles=j;
 		    		j=j+1;
 		    	 }
-		    	
+
 		      }
 
 		    fr.close();
@@ -241,11 +245,11 @@ class TestConsultar {
 		      System.out.println("Error (LecturaArchivos): " + e);
 		}
 	}
-	
+
 	private static void BrowserOpen() throws IOException, InterruptedException, InvalidFormatException
 	{
-		
-		
+
+
 		try
 		{
 			System.out.println("");
@@ -265,8 +269,8 @@ class TestConsultar {
 				{
 					System.setProperty("webdriver.gecko.driver","Drivers/Firefox/win32/geckodriver.exe");
 				}
-				
-				
+
+
 				FirefoxOptions options = new FirefoxOptions();
 				//options.addArguments("--silent");
 				options.addArguments("--start-fullscreen");
@@ -300,7 +304,7 @@ class TestConsultar {
 					{
 						System.setProperty("webdriver.chrome.driver","Drivers/Chrome/win32/chromedriver.exe");
 					}
-					
+
 					ChromeOptions options = new ChromeOptions();
 					//options.addArguments("--silent");
 					//options.addArguments("--start-fullscreen");
@@ -317,24 +321,24 @@ class TestConsultar {
 		    driver.get(baseUrl);
 
 		    TimeUnit.SECONDS.sleep(5);
-		    
+
 		    imagen = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-		    
+
 		    NameScreenShotTest = takeFullScreenShot(driver, "Pantalla_Inicio_H2H",imagen,"");
-		    
+
 		    TimeUnit.SECONDS.sleep(5);
-		    
+
 		    ejecutarciclos();
-		    
+
 		    BrowserClose();
-		    
+
 		}
 		catch(NullPointerException e)
 		{
 		      System.out.println("Error (BrowserOpen): " + e);
 		}
 	}
-	
+
 	private static void BrowserClose() throws IOException, InterruptedException
 	{
 		try
@@ -349,47 +353,104 @@ class TestConsultar {
 		    System.out.println("Error (BrowserClose): " + e);
 		}
 	}
-	
+
 	private static void ejecutarciclos() throws InterruptedException, IOException, InvalidFormatException
 	{
 		for (int c=1; c <=ciclos;c++)
 		{
 			System.out.println("(" + hora("") + ") * Inicio del Ciclo: " + c);
-			
+
 			String ruta = PathFiles + "\\Evidencias\\Pantallas\\Ciclo" + c;
-			
+
 			createdirectory(ruta);
-			
+
 			ValidarArchivos(c);
-			
+
 			System.out.println("(" + hora("") + ") * Fin de la validación de los archivos en el ciclo " + c);
-			
+
 			if (c < ciclos)
 			{
 
 				System.out.println("(" + hora("") + ") * Inicio del tiempo de espera del ciclo: " + c);
-				
+
 				TimeUnit.MINUTES.sleep(tiempociclos);
-				
+
 				System.out.println("(" + hora("") + ") * Fin del tiempo de espera del ciclo: " + c);
 
 			}
-			
+
 		}
 	}
-	
+
+	private static void copiaPlantillaAruta(String origen, String destino) {
+		File archivoOrigen = new File(origen);
+		Path archivoDestino = Paths.get(destino);
+		System.err.println("Archivo origen:"+origen);
+		System.err.println("Archivo destino:"+destino);
+		try {
+			Files.copy(archivoOrigen.toPath(), archivoDestino,
+			        StandardCopyOption.REPLACE_EXISTING);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	private static void ValidaCuenta(int registro, int ciclo) throws IOException, InterruptedException
 	{
-		
+
 		String ubicacion = "\\Ciclo" + ciclo + "\\" + DataConfig[registro][1].toString() + "\\";
-		
+		String nombreArchivoImagenesDeCadaCiclo = "FOR-DES-502_H2HS_Flujo H2H Transferencia Mismo Banco.docx";
+		String mensaje;
+
+		String archivoOrigen = "C:\\H2H\\Paso\\Santander\\Archivos\\plantilla.docx";
+		//String archivoDestino = ubicacion + nombreArchivo;
+
+
+
 		try
 		{
-			createdirectory(PathFiles + "\\Evidencias\\Pantallas\\Ciclo" + ciclo + "\\" + DataConfig[registro][1].toString());
-			
-			wait = new WebDriverWait(driver,100);
+			rutaCiclo = PathFiles + "\\Evidencias\\Pantallas\\Ciclo" + ciclo + "\\" + DataConfig[registro][1].toString()  +"\\";
+			createdirectory(rutaCiclo);
 
-		    System.out.println("(" + hora("") + ") * Esperamos que se muestre el campo para ingresar el Nombre de Usuario");
+			/////////////////////////
+			copiaPlantillaAruta(archivoOrigen, rutaCiclo + nombreArchivoImagenesDeCadaCiclo);
+
+			System.err.println("Por crear archivo");
+			archivoWord = new ArchivoWord(rutaCiclo, nombreArchivoImagenesDeCadaCiclo);
+			archivoWord.crearword();
+			archivoWord.estableceFormatoTextoNormal();
+			System.err.println("####################################################################################################");
+			//////////////////////////////
+			//C:\H2H\Paso\Santander\Archivos\Pruebas\Evidencias\Pantallas\Ciclo1\MT101_14062018_3247_32_001.mt101
+			//C:\H2H\Paso\Santander\Archivos\Pruebas\                     Ciclo1\MT101_14062018_3247_32_001.mt101prueba123.docx
+			//C:\H2H\Paso\Santander\Archivos\Pruebas\Evidencias\Pantallas\Ciclo1\MT101_14062018_3247_32_001.mt101
+
+			wait = new WebDriverWait(driver,100);
+		    
+		    mensaje = "(" + hora("") + ") * Esperamos que se muestre el campo para ingresar el Nombre de Usuario";
+		    System.out.println(mensaje);
+			archivoWord.escribeword(mensaje);
+
+			//incertamos imagen
+			imagen = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+			String nombreScresenShotTest = takeFullScreenShot(driver, "ImagenPrimera",imagen,ubicacion);
+
+			System.err.println("archivo screen:"+nombreScresenShotTest);
+			archivoWord.pegaimagenword(rutaCiclo + nombreScresenShotTest +".png");
+
+			mensaje = "(" + hora("") + ") * Fin de pruebas";
+			System.out.println(mensaje);
+
+
+			archivoWord.escribeword(mensaje);
+			archivoWord.alineaIzquierda();
+			archivoWord.cambiaTamanoFuente(20);
+
+			archivoWord.escribeword("Mensaje de prueba");
+
+			//Guarda y cierra el word
+		    archivoWord.cerrarword();
 
 		    wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@id='txtUsername']")));
 
@@ -406,38 +467,38 @@ class TestConsultar {
 		    System.out.println("(" + hora("") + ") 7. Ingresamos la contraseña");
 
 		    driver.findElement(By.xpath("//input[@id='pssPassword']")).sendKeys(DataConfig[registro][7]);
-		    
+
 		    imagen = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-		    
+
 		    NameScreenShotTest = takeFullScreenShot(driver, "PantallaLogin",imagen,ubicacion);
-		    
+
 		    System.out.println("(" + hora("") + ") 8. Pulsamos el botón Aceptar");
 
 		    driver.findElement(By.id("idAceptar")).click();
 
 		    TimeUnit.SECONDS.sleep(5);
-		    
+
 		    if (driver.findElement(By.className("pageTitle")).getText().contains("DUPLICADA"))
 		    {
 		    	System.out.println("(" + hora("") + ") * Sesion Duplicada");
 		    	imagen = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-			    
+
 			    NameScreenShotTest = takeFullScreenShot(driver, "PantallaSesionDuplicada",imagen,ubicacion);
 			    DataConfig[registro][9]="Error";
-			  
+
 		    }
 		    else
 		    {
-		    	
+
 		    	DataConfig[registro][9]="";
 		    	System.out.println("(" + hora("") + ") * Esperamos que se muestre el menú Monitoreo");
 
 		    	wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#monitoreo a")));
-		    
+
 		    	imagen = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-		    
+
 		    	NameScreenShotTest = takeFullScreenShot(driver, "PantallaInicial",imagen,ubicacion);
-		    
+
 		    	TimeUnit.SECONDS.sleep(2);
 
 		    	System.out.println("(" + hora("") + ") 9. Abrimos el menú Monitoreo");
@@ -447,114 +508,114 @@ class TestConsultar {
 		    	TimeUnit.SECONDS.sleep(5);
 
 		    	System.out.println("(" + hora("") + ") 10. Pulsar en la opción Gestión Tracking de Archivo");
-		    
+
 		    	imagen = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-		    
+
 		    	NameScreenShotTest = takeFullScreenShot(driver, "PantallaSubMenus",imagen,ubicacion);
-		    
+
 		    	driver.findElement(By.cssSelector("a[href='/h2husr/H2HUsuarios/gestiontraking/inicio.do?origen=tracking']")).click();
 
 		    	TimeUnit.SECONDS.sleep(10);
 
 		    	System.out.println("(" + hora("") + ") * Esperamos que se muestre el campo de búsqueda de clientes");
-		    
+
 		    	wait.until(ExpectedConditions.presenceOfElementLocated(By.id("codigoCliente"))).getLocation();
 
 		    	System.out.println("(" + hora("") + ") 11. Buscamos al cliente " + DataConfig[registro][4] + " que deseamos consultar el estatus del envió del archivo");
-		    
+
 		    	Scroll("PantallaTotalClientes",ciclo,registro,ubicacion);
-		    
+
 			    driver.findElement(By.id("codigoCliente")).sendKeys(DataConfig[registro][4]);
-	
+
 			    TimeUnit.SECONDS.sleep(3);
-	
+
 			    driver.findElement(By.className("frameBuscadorSimple")).getLocation();
-			    
+
 			    imagen = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
 			    NameScreenShotTest = takeFullScreenShot(driver, "PantallaBusquedaCliente",imagen,ubicacion);
-		    
+
 			    driver.findElement(By.cssSelector("#tab tbody tr td.texto_izquierda a")).submit();
-			    
+
 			    TimeUnit.SECONDS.sleep(3);
-			    
+
 			    //Si la busquedano encuentra nada entonces busca la ventana de error
-			    
+
 			    List<WebElement> ElementosPoput = driver.findElements(By.id("popup_container"));
-			    
+
 			    if (ElementosPoput .size() >0)
 			    	{
 				    	imagen = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
 				    	NameScreenShotTest = takeFullScreenShot(driver, "PantallaErrorNoSeEncuentraCliente",imagen,ubicacion);
 				    	driver.findElement(By.id("popup_ok")).click();
-				    	
+
 				    	System.out.println("(" + hora("") + ") * No se encuentra el cliente " + DataConfig[registro][4]);
 				    	driver.findElement(By.id("buttonSalir")).click();
 			    	}
-			    else 
+			    else
 			    {
 				    wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//table[@class='table_wrap']/tbody/tr[@class='odd1']")));
-	
+
 				    driver.findElement(By.xpath("//table[@class='table_wrap']/tbody/tr[@class='odd1']")).getLocation();
-	
+
 				    TimeUnit.SECONDS.sleep(10);
-				    
+
 				    Scroll("PantallaTotalTransaccionesCliente",ciclo,registro,ubicacion);
-	
+
 				    List<WebElement> elems = driver.findElements(By.xpath("//table[@class='table_wrap']/tbody/tr[@class='odd1']"));
-	
+
 				    for (WebElement rowElem : elems)
 				    {
 				    	List<WebElement> cells = rowElem.findElements(By.xpath("td"));
-		
+
 				    	if (cells.get(1).getText() == DataConfig[registro][4]);
 				    	{
 				    		System.out.println("(" + hora("") + ") 12. Pulsamos el total de los archivos procesados (" + cells.get(2).getText() + ")" );
-				    		
+
 				    		cells.get(2).getLocation();
-				    		
+
 				    		imagen = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
 				    		NameScreenShotTest = takeFullScreenShot(driver, "PantallaResultadoBusquedaClientes",imagen,ubicacion);
-		
+
 				    		TimeUnit.SECONDS.sleep(2);
-				    		
+
 				    		//cells.get(2).submit();
-				    		
+
 				    		cells.get(2).click();
-		
+
 				    	}
 				    }
-		
+
 				    TimeUnit.SECONDS.sleep(20);
-		
+
 				    wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//table[@class='table']/tbody/tr[@class='odd1']")));
-				    
+
 				    imagen = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
 				    NameScreenShotTest = takeFullScreenShot(driver, "PantallaBusquedaArchivo",imagen,ubicacion);
-				    
+
 				    Scroll("PantallaResultado",ciclo,registro,ubicacion);
-		
+
 				    List<WebElement> felems = driver.findElements(By.xpath("//table[@class='table']/tbody/tr"));
-		
+
 				    System.out.println("(" + hora("") + ") 13. Obtenemos el Estatus del Archivo");
-				    
+
 				    int col=1;
 			    	int encontrado=0;
 			    	String Archivo="";
-		
-		
+
+
 				    for (WebElement rowfElem : felems)
 				    {
-		
+
 				    	List<WebElement> cells = rowfElem.findElements(By.xpath("td"));
-		
+
 				    	col=1;
 				    	encontrado=0;
 				    	Archivo="";
-		
+
 				    	for (WebElement elemt : cells)
 				    	{
 				    		String valor=elemt.getText();
-		
+
 					    	if (DataConfig[registro][0].equals(valor)==true)
 					    	{
 					    		encontrado = 1;
@@ -562,7 +623,7 @@ class TestConsultar {
 					    	}
 					    	if (encontrado==1 && col==4)
 				    	{
-				    		
+
 				    		elemt.getLocation();
 				    		System.out.println("(" + hora("") + ") * (Validación Archivo) El archivo " + Archivo + " tiene el estatus " + elemt.getText());
 				    		DataConfig[registro][5]=elemt.getText();
@@ -572,17 +633,17 @@ class TestConsultar {
 			    		col=col+1;
 				    	}
 				    }
-				    
+
 				    imagen = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-				    
+
 				    NameScreenShotTest = takeFullScreenShot(driver, "PantallaResultadoBusquedaArchivo",imagen,ubicacion);
-				    		    
+
 				    TimeUnit.SECONDS.sleep(20);
-				    
+
 				    }
 		    	}
 			}
-	
+
 			catch(Exception e)
 			{
 				e.printStackTrace();
@@ -603,92 +664,92 @@ class TestConsultar {
 				a=TotFiles;
 			}
 			else
-			{				
+			{
 				if (DataConfig[a][8]!="PROCESADO" ||DataConfig[a][8]!="DUPLICADO")
-				{					
+				{
 					ValidaCuenta(a,ciclo);
-					
+
 					if (DataConfig[a][9].equals(""))
 					{
 						ValidaOperaciones(a,ciclo);
-					}	
+					}
 				}
 				else
 				{
 					System.out.println("(" + hora("") + ") * La cuenta " + DataConfig[a][3] + " con el archivo " +  DataConfig[a][1] + "tiene el estatus final " + DataConfig[a][8]);
 				}
 			}
-			
+
 			Resultados(TotFiles,a);
 		}
 	}
-	
+
 	private static void ValidaOperaciones(int registro,  int ciclo) throws IOException, InterruptedException, InvalidFormatException
 	{
 
 		String ubicacion = "\\Ciclo" + ciclo + "\\" + DataConfig[registro][1].toString() + "\\";
-		
+
 		try
 		{
 			System.out.println("(" + hora("") + ") 14. Pulsar en la opción Monitoreo > Monitor de Operaciones");
-			
+
 			TimeUnit.SECONDS.sleep(2);
-		
+
 			//driver.findElement(By.id("consultaOperaciones")).click();
 			//driver.findElement(By.id("consultaOperaciones")).click();
-			
+
 			driver.findElement(By.cssSelector("a[href='/h2husr/H2HUsuarios/monitorOperaciones/monitorOperaciones.do']")).getLocation();
 		    driver.findElement(By.cssSelector("a[href='/h2husr/H2HUsuarios/monitorOperaciones/monitorOperaciones.do']")).click();
-		    
+
 		    TimeUnit.SECONDS.sleep(5);
 
 		    System.out.println("(" + hora("") + ") * Esperamos que se muestre el campo de búsqueda por Nombre de Archivo");
-	    
+
 		    wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("txtNombreArchivo")));
 
 		    System.out.println("(" + hora("") + ") 15. Buscamos al cliente " + DataConfig[registro][4] + " que deseamos consultar el estatus del envió del archivo");
-		    
+
 		    driver.findElement(By.id("txtNombreArchivo")).sendKeys(DataConfig[registro][1]);
-		    
+
 		    imagen = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-		    
+
 		    NameScreenShotTest = takeFullScreenShot(driver, "PantallaMonitorOperacionesBusqueda",imagen,ubicacion);
-		    
+
 		    driver.findElement(By.id("btnConsultar")).click();
-		    
+
 		    List<WebElement> ElementosPoput = driver.findElements(By.id("popup_container"));
-		    
+
 		    if (ElementosPoput.size()>0)
 		    	{
 		    		TimeUnit.SECONDS.sleep(2);
 		    		imagen = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
 			    	NameScreenShotTest = takeFullScreenShot(driver, "PantallaErrorCliente",imagen,ubicacion);
 			    	driver.findElement(By.id("popup_ok")).click();
-			    	
+
 			    	System.out.println("(" + hora("") + ") * No se encuentra registros del archivo " + DataConfig[registro][1]);
 			    	driver.findElement(By.id("buttonSalir")).click();
 			    	DataConfig[registro][9]="Error";
 		    	}
 		    else {
-		    	
+
 		    	DataConfig[registro][9]="";
-		    
+
 			    List<WebElement> felems =driver.findElements(By.xpath("//table[@id='tblOperaciones']/tbody/tr[@class='odd2']"));
-	
+
 			    System.out.println("(" + hora("") + ") * Obtenemos el Estatus del Procesamiento del Archivo");
-	
+
 			    String movimiento = "";
 			    String ctacargo = "";
 			    String producto = "";
 			    String status = "";
 			    String importe = "";
-			    
+
 			    Scroll("PantallaTotalMovArchivo",ciclo,registro,ubicacion);
-	
+
 			    for (WebElement rowfElem : felems)
 			    {
 			    	List<WebElement> cells = rowfElem.findElements(By.xpath("td"));
-	
+
 			    	if (cells.get(6).getText().equals(DataConfig[registro][0])==true)
 			    	{
 			    		movimiento = movimiento + cells.get(2).getText() + ";";
@@ -698,27 +759,27 @@ class TestConsultar {
 			    		importe = importe + cells.get(10).getText() + ";";
 			    	}
 			    }
-	
+
 			    DataConfig[registro][10]=movimiento;
 			    DataConfig[registro][11]=ctacargo;
 			    DataConfig[registro][12]=producto;
 			    DataConfig[registro][13]=status;
 			    DataConfig[registro][14]=importe;
-			    
+
 			    imagen = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-			    
+
 			    NameScreenShotTest = takeFullScreenShot(driver, "PantallaResultadoBusquedaArchivo",imagen,ubicacion);
-		    
+
 			    TimeUnit.SECONDS.sleep(5);
-	
+
 			    System.out.println("(" + hora("") + ") 16. Cerramos la sesión");
-		    
+
 			    driver.findElement(By.id("buttonSalir")).click();
-			    
+
 			    TimeUnit.SECONDS.sleep(3);
-			    
+
 			    imagen = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-			    
+
 			    NameScreenShotTest = takeFullScreenShot(driver, "PantallaCierreSesion",imagen,ubicacion);
 		    }
 		}
@@ -732,7 +793,7 @@ class TestConsultar {
 		}
 
 	}
-	
+
 	private static void Resultados(int TotFiles,int b) throws IOException, InterruptedException
 	{
 		try
@@ -749,23 +810,23 @@ class TestConsultar {
 					System.out.println("* Archivo: " + DataConfig[b][1]);
 					System.out.println("* Estado: " + DataConfig[b][8]);
 					System.out.println("* Estado de los movimientos del Archivo: \r\n");
-					
+
 					if (DataConfig[b][10].equals("")==false)
 					{
-					
+
 						String movimiento = DataConfig[b][10].toString();
 						String ctacargo = DataConfig[b][11].toString();
 						String producto = DataConfig[b][12].toString();
 						String status = DataConfig[b][13].toString();
 						String importe = DataConfig[b][14].toString();
-						
+
 						System.out.println(status);
-						
+
 						int x=1;
-	
+
 						/*
 						XWPFTable tableresultadoencabezado = documento.createTable();
-						
+
 						XWPFTableRow tableresultadoRowOne = tableresultadoencabezado.getRow(0);
 						tableresultadoRowOne.getCell(0).setText("No.");
 						tableresultadoRowOne.getCell(0).setColor("100000");
@@ -789,8 +850,8 @@ class TestConsultar {
 
 						do
 						{
-	
-	
+
+
 				    		System.out.println(
 				    				" * No. " + x
 				    				+ " | Movimiento: " + movimiento.substring(0, movimiento.indexOf(";"))
@@ -812,14 +873,14 @@ class TestConsultar {
 							tableresultadoRowData.getCell(5).setText(importe.substring(0, importe.indexOf(";")));
 							tableresultadoRowData.getCell(5).setVerticalAlignment(XWPFVertAlign.CENTER);
 				    		*/
-				    		
+
 				    		movimiento = movimiento.substring(movimiento.indexOf(";")+1);
 				    		ctacargo = ctacargo.substring(ctacargo.indexOf(";")+1);
 				    		producto = producto.substring(producto.indexOf(";")+1);
 				    		status = status.substring(status.indexOf(";")+1);
 				    		importe = importe.substring(importe.indexOf(";")+1);
 				    		x++;
-	
+
 						}while (status.indexOf(";") > 0);
 					}
 
@@ -848,7 +909,7 @@ class TestConsultar {
 		}
 
 	}
-	
+
 	private static void OperSinResult(String ubicacion) throws IOException, InterruptedException
 	{
 		try
@@ -867,7 +928,7 @@ class TestConsultar {
 		}
 	}
 
-	
+
 	private static String takeFullScreenShot(WebDriver driver, String imageName,File imagen, String ubicacion)
 
 	{
@@ -895,25 +956,25 @@ class TestConsultar {
 		}
 		return Nombre;
 	}
-	
+
 	private static void Scroll (String Nombre,int ciclos, int registro, String ubicacion) throws InvalidFormatException, IOException, InterruptedException
 	{
 		JavascriptExecutor js = (JavascriptExecutor) driver;
 	    Object tamanodocument = js.executeScript("return document.body.scrollHeight");
-	    
+
 	    int largo =Integer.parseInt(tamanodocument.toString());
 	    int divlargo=largo/500;
-       
+
         for (int i=1;i<=divlargo;i++)
         {
         	imagen = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
         	NameScreenShotTest = takeFullScreenShot(driver, Nombre + i,imagen,ubicacion);
-        	
+
         	js.executeScript("window.scrollBy(0,500)");
         	TimeUnit.SECONDS.sleep(3);
         }
 	}
-	
+
 	private static String hora (String hora)
 	{
 		Date date = new Date();
